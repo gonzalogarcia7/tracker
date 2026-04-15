@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Engagement Flow • Audit Tracker</title>
+    <title>Engagement Flow • Your Solo Audit Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
@@ -23,7 +23,7 @@
                     <i class="fa-solid fa-chart-gantt text-emerald-500"></i>
                     Engagement Flow
                 </h1>
-                <p class="text-zinc-500 text-sm mt-1">Audit Practice OS</p>
+                <p class="text-zinc-500 text-sm mt-1">Solo Audit OS</p>
             </div>
             
             <div class="p-4">
@@ -66,13 +66,6 @@
                            type="text" 
                            placeholder="Search clients..." 
                            class="bg-zinc-800 border border-zinc-700 rounded-xl px-5 py-2 w-80 focus:outline-none focus:border-emerald-500">
-                    
-                    <div class="flex items-center gap-2 text-sm">
-                        <button onclick="switchView('kanban')" id="btn-kanban"
-                                class="px-4 py-2 rounded-xl hover:bg-zinc-800 data-[active=true]:bg-zinc-800">Kanban</button>
-                        <button onclick="switchView('resource')" id="btn-resource"
-                                class="px-4 py-2 rounded-xl hover:bg-zinc-800">Resource View</button>
-                    </div>
                 </div>
 
                 <div class="flex items-center gap-4">
@@ -81,22 +74,14 @@
                         <i class="fa-solid fa-calendar"></i>
                         Monday Overview
                     </button>
-                    <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center font-semibold">GG</div>
+                    <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center font-semibold">G</div>
                 </div>
             </div>
 
             <!-- Kanban View -->
             <div id="kanbanView" class="flex-1 overflow-auto p-8">
                 <div class="grid grid-cols-5 gap-6" id="kanbanBoard">
-                    <!-- Columns will be injected by JS -->
-                </div>
-            </div>
-
-            <!-- Resource View (hidden by default) -->
-            <div id="resourceView" class="flex-1 overflow-auto p-8 hidden">
-                <h2 class="text-xl font-semibold mb-6">Team Bandwidth</h2>
-                <div class="grid grid-cols-3 gap-6" id="resourceGrid">
-                    <!-- Populated by JS -->
+                    <!-- Columns injected by JS -->
                 </div>
             </div>
         </div>
@@ -113,60 +98,86 @@
         </div>
     </div>
 
-    <!-- Add/Edit Client Modal -->
+    <!-- Client Detail Modal (notes + checklist + everything) -->
     <div id="clientModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-        <div class="bg-zinc-900 rounded-3xl w-full max-w-lg mx-4">
-            <div class="p-8">
-                <h2 class="text-2xl font-bold mb-6" id="modalTitle">Add New Client</h2>
-                
-                <div class="space-y-5">
+        <div class="bg-zinc-900 rounded-3xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="p-8 pb-4 border-b border-zinc-800 flex items-center justify-between">
+                <h2 class="text-2xl font-bold" id="modalTitle">Client Details</h2>
+                <button onclick="closeModal()" class="text-zinc-400 hover:text-white text-2xl leading-none">×</button>
+            </div>
+            
+            <div class="flex-1 overflow-auto p-8 space-y-8">
+                <!-- Basic Info -->
+                <div class="grid grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm text-zinc-400 mb-1">Client Name</label>
                         <input id="clientName" type="text" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-3 focus:outline-none focus:border-emerald-500">
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm text-zinc-400 mb-1">Client Code</label>
-                            <input id="clientCode" type="text" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-3 focus:outline-none focus:border-emerald-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-zinc-400 mb-1">Assigned To</label>
-                            <select id="assignedTo" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-3 focus:outline-none focus:border-emerald-500">
-                                <option value="Gon">Gon</option>
-                                <option value="Sarah">Sarah</option>
-                                <option value="Mike">Mike</option>
-                                <option value="Priya">Priya</option>
-                            </select>
-                        </div>
+                    <div>
+                        <label class="block text-sm text-zinc-400 mb-1">Client Code</label>
+                        <input id="clientCode" type="text" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-3 focus:outline-none focus:border-emerald-500">
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm text-zinc-400 mb-1">Start Date</label>
-                            <input id="startDate" type="date" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-3 focus:outline-none focus:border-emerald-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-zinc-400 mb-1">Due Date</label>
-                            <input id="dueDate" type="date" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-3 focus:outline-none focus:border-emerald-500">
-                        </div>
+                    <div>
+                        <label class="block text-sm text-zinc-400 mb-1">Deadline</label>
+                        <input id="dueDate" type="date" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-3 focus:outline-none focus:border-emerald-500">
                     </div>
                     <div>
                         <label class="block text-sm text-zinc-400 mb-1">Stage</label>
-                        <select id="stageSelect" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-3 focus:outline-none focus:border-emerald-500">
-                            <option value="Planning">Planning</option>
-                            <option value="Fieldwork">Fieldwork</option>
-                            <option value="Reporting">Reporting</option>
-                            <option value="Final">Final</option>
-                            <option value="Archive">Archive</option>
+                        <select id="stageSelect" onchange="manualStageChange()" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-3 focus:outline-none focus:border-emerald-500">
+                            <!-- populated by JS -->
                         </select>
                     </div>
                 </div>
+
+                <!-- Progress -->
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="font-medium">Stage Completion</span>
+                        <span id="modalProgressText" class="font-mono">0%</span>
+                    </div>
+                    <div class="h-3 bg-zinc-700 rounded-full overflow-hidden">
+                        <div id="modalProgressBar" class="h-full bg-emerald-500 progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Checklist -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold">Current Stage Checklist</h3>
+                        <button onclick="addChecklistItem()" 
+                                class="text-emerald-400 hover:text-emerald-300 text-sm flex items-center gap-1">
+                            <i class="fa-solid fa-plus"></i> Add step
+                        </button>
+                    </div>
+                    <div id="checklistContainer" class="space-y-3"></div>
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <h3 class="font-semibold mb-3">Notes (things you want to remember)</h3>
+                    <textarea id="clientNotes" rows="4"
+                              class="w-full bg-zinc-800 border border-zinc-700 rounded-3xl px-5 py-4 focus:outline-none focus:border-emerald-500 resize-none"
+                              placeholder="e.g. Needs Q2 bank statements..."></textarea>
+                </div>
+
+                <!-- Bottlenecks -->
+                <div>
+                    <h3 class="font-semibold mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Bottlenecks
+                    </h3>
+                    <div id="modalBottlenecks" class="flex flex-wrap gap-2"></div>
+                    <div class="mt-3 flex gap-3">
+                        <input id="newBottleneckInput" type="text" placeholder="Add bottleneck..." 
+                               class="flex-1 bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-3 focus:outline-none focus:border-emerald-500">
+                        <button onclick="addBottleneck()" class="bg-amber-400 text-black px-6 rounded-2xl font-medium">Add</button>
+                    </div>
+                </div>
             </div>
-            
+
             <div class="border-t border-zinc-800 p-6 flex gap-3">
-                <button onclick="closeModal()" 
-                        class="flex-1 py-4 bg-zinc-800 hover:bg-zinc-700 rounded-2xl font-medium">Cancel</button>
-                <button onclick="saveClient()" 
-                        class="flex-1 py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-medium">Save Client</button>
+                <button onclick="deleteClient()" class="flex-1 py-4 text-red-400 hover:bg-red-900/30 rounded-2xl font-medium">Delete Client</button>
+                <button onclick="closeModal()" class="flex-1 py-4 bg-zinc-800 hover:bg-zinc-700 rounded-2xl font-medium">Cancel</button>
+                <button onclick="saveClientDetail()" class="flex-1 py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-medium">Save All Changes</button>
             </div>
         </div>
     </div>
@@ -184,23 +195,54 @@
     </div>
 
     <script>
-        // Sample Data
+        // Default checklists per stage (exactly as you specified + ability to add/delete)
+        const defaultChecklists = {
+            "Planning": [
+                "EL sent",
+                "PAR done",
+                "Walkthroughs",
+                "Risk assessment",
+                "Planning memo"
+            ],
+            "Fieldwork": [
+                "Assets",
+                "Liabilities",
+                "Equity",
+                "Rev",
+                "Expenses"
+            ],
+            "Financials": [
+                "Schedules",
+                "Notes",
+                "Proofing"
+            ],
+            "Final": [
+                "Send draft to client",
+                "Final proofing",
+                "Clear review notes"
+            ],
+            "Archive": [
+                "Did you archive?"
+            ]
+        };
+
+        const stages = ["Planning", "Fieldwork", "Financials", "Final", "Archive"];
+
         let clients = [
             {
                 id: "c1",
                 name: "Acme Manufacturing",
                 clientCode: "ACM-2026",
                 stage: "Fieldwork",
-                progress: 65,
-                startDate: "2026-03-01",
                 dueDate: "2026-05-15",
-                assignedTo: "Gon",
-                milestones: [
-                    {title: "Engagement letter signed", completed: true},
-                    {title: "Risk assessment complete", completed: true},
-                    {title: "Internal controls tested", completed: false},
-                    {title: "Substantive testing", completed: false}
+                checklist: [
+                    {title: "Assets", completed: true},
+                    {title: "Liabilities", completed: true},
+                    {title: "Equity", completed: false},
+                    {title: "Rev", completed: false},
+                    {title: "Expenses", completed: false}
                 ],
+                notes: "Client still needs to provide Q1 bank recs.",
                 bottlenecks: ["Waiting on bank confirmations"]
             },
             {
@@ -208,48 +250,37 @@
                 name: "TechNova Inc",
                 clientCode: "TNV-2026",
                 stage: "Planning",
-                progress: 30,
-                startDate: "2026-04-01",
                 dueDate: "2026-06-01",
-                assignedTo: "Sarah",
-                milestones: [
-                    {title: "Kickoff meeting", completed: true},
-                    {title: "Planning analytics", completed: false}
+                checklist: [
+                    {title: "EL sent", completed: true},
+                    {title: "PAR done", completed: false},
+                    {title: "Walkthroughs", completed: false},
+                    {title: "Risk assessment", completed: false},
+                    {title: "Planning memo", completed: false}
                 ],
+                notes: "",
                 bottlenecks: []
-            },
-            {
-                id: "c3",
-                name: "Green Valley Foods",
-                clientCode: "GVF-2026",
-                stage: "Reporting",
-                progress: 80,
-                startDate: "2026-02-15",
-                dueDate: "2026-04-30",
-                assignedTo: "Mike",
-                milestones: [
-                    {title: "Draft report", completed: true},
-                    {title: "Management letter", completed: false}
-                ],
-                bottlenecks: ["Client missing AR aging"]
             }
         ];
 
-        const stages = ["Planning", "Fieldwork", "Reporting", "Final", "Archive"];
-
         function saveToLocalStorage() {
-            localStorage.setItem("engagementClients", JSON.stringify(clients));
+            localStorage.setItem("engagementClientsSolo", JSON.stringify(clients));
         }
 
         function loadFromLocalStorage() {
-            const saved = localStorage.getItem("engagementClients");
+            const saved = localStorage.getItem("engagementClientsSolo");
             if (saved) clients = JSON.parse(saved);
         }
 
-        function calculateProgress(milestones) {
-            if (!milestones || milestones.length === 0) return 0;
-            const completed = milestones.filter(m => m.completed).length;
-            return Math.round((completed / milestones.length) * 100);
+        function calculateProgress(checklist) {
+            if (!checklist || checklist.length === 0) return 0;
+            const completed = checklist.filter(item => item.completed).length;
+            return Math.round((completed / checklist.length) * 100);
+        }
+
+        function getNextStage(currentStage) {
+            const idx = stages.indexOf(currentStage);
+            return idx < stages.length - 1 ? stages[idx + 1] : currentStage;
         }
 
         function renderKanban() {
@@ -277,7 +308,7 @@
                     container.appendChild(card);
                 });
 
-                // Make droppable
+                // Drag & drop
                 container.addEventListener("dragover", e => e.preventDefault());
                 container.addEventListener("drop", e => {
                     e.preventDefault();
@@ -285,7 +316,8 @@
                     const client = clients.find(c => c.id === id);
                     if (client) {
                         client.stage = stage;
-                        client.progress = calculateProgress(client.milestones);
+                        // Load default checklist for new stage
+                        client.checklist = defaultChecklists[stage].map(title => ({title, completed: false}));
                         renderKanban();
                         renderBottlenecks();
                         saveToLocalStorage();
@@ -298,28 +330,26 @@
             const card = document.createElement("div");
             card.className = `client-card bg-zinc-800 border border-zinc-700 rounded-2xl p-4 cursor-grab active:cursor-grabbing`;
             card.draggable = true;
-            card.ondragstart = (e) => {
-                e.dataTransfer.setData("text/plain", client.id);
-            };
+            card.ondragstart = (e) => e.dataTransfer.setData("text/plain", client.id);
 
+            const progress = calculateProgress(client.checklist);
             const isOverdue = new Date(client.dueDate) < new Date() && client.stage !== "Archive";
 
             card.innerHTML = `
                 <div class="flex justify-between items-start">
-                    <div>
+                    <div class="flex-1">
                         <div class="font-semibold">${client.name}</div>
                         <div class="text-xs text-zinc-500">${client.clientCode}</div>
                     </div>
-                    <div class="text-xs px-2.5 py-1 rounded-full bg-zinc-700">${client.assignedTo}</div>
                 </div>
                 
                 <div class="mt-4 h-2 bg-zinc-700 rounded-full overflow-hidden">
-                    <div class="progress-bar h-full ${client.progress > 70 ? 'bg-emerald-500' : client.progress > 40 ? 'bg-amber-500' : 'bg-red-500'}" 
-                         style="width: ${client.progress}%"></div>
+                    <div class="progress-bar h-full ${progress > 70 ? 'bg-emerald-500' : progress > 40 ? 'bg-amber-500' : 'bg-red-500'}" 
+                         style="width: ${progress}%"></div>
                 </div>
-                <div class="text-xs text-right mt-1 text-zinc-400">${client.progress}%</div>
+                <div class="text-xs text-right mt-1 text-zinc-400">${progress}%</div>
 
-                <div class="mt-3 text-xs">
+                <div class="mt-3 text-xs flex justify-between">
                     <span class="${isOverdue ? 'text-red-400' : 'text-zinc-400'}">
                         Due: ${client.dueDate}
                     </span>
@@ -331,7 +361,9 @@
                 </div>` : ''}
             `;
 
-            card.onclick = () => editClient(client.id);
+            card.onclick = (e) => {
+                if (e.target.tagName !== "BUTTON") openClientDetail(client.id);
+            };
             return card;
         }
 
@@ -348,104 +380,169 @@
 
             withBottlenecks.forEach(client => {
                 const div = document.createElement("div");
-                div.className = "bg-zinc-800 border border-red-900/30 rounded-2xl p-4 text-sm";
+                div.className = "bg-zinc-800 border border-red-900/30 rounded-2xl p-4 text-sm cursor-pointer";
                 div.innerHTML = `
                     <div class="font-medium">${client.name}</div>
                     <div class="text-red-400 text-xs mt-1">${client.bottlenecks[0]}</div>
                 `;
+                div.onclick = () => openClientDetail(client.id);
                 container.appendChild(div);
             });
         }
 
-        function renderResourceView() {
-            const container = document.getElementById("resourceGrid");
-            container.innerHTML = "";
+        let currentClientId = null;
 
-            const team = {};
-            clients.forEach(c => {
-                if (!team[c.assignedTo]) team[c.assignedTo] = [];
-                team[c.assignedTo].push(c);
-            });
-
-            Object.keys(team).forEach(member => {
-                const memberClients = team[member];
-                const totalProgress = memberClients.reduce((sum, c) => sum + c.progress, 0) / memberClients.length;
-
-                const card = document.createElement("div");
-                card.className = "bg-zinc-900 border border-zinc-700 rounded-3xl p-6";
-                card.innerHTML = `
-                    <div class="flex justify-between">
-                        <div class="font-semibold">${member}</div>
-                        <div class="text-sm ${memberClients.length > 5 ? 'text-red-400' : 'text-emerald-400'}">${memberClients.length} clients</div>
-                    </div>
-                    <div class="text-5xl font-bold mt-4">${Math.round(totalProgress)}%</div>
-                    <div class="text-xs text-zinc-500">avg progress</div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function addNewClient() {
-            document.getElementById("modalTitle").textContent = "Add New Client";
-            document.getElementById("clientName").value = "";
-            document.getElementById("clientCode").value = "";
-            document.getElementById("startDate").value = "";
-            document.getElementById("dueDate").value = "";
-            document.getElementById("stageSelect").value = "Planning";
-            document.getElementById("assignedTo").value = "Gon";
-            document.getElementById("clientModal").classList.remove("hidden");
-            window.currentEditingId = null;
-        }
-
-        function editClient(id) {
+        function openClientDetail(id) {
+            currentClientId = id;
             const client = clients.find(c => c.id === id);
             if (!client) return;
 
-            document.getElementById("modalTitle").textContent = "Edit Client";
+            document.getElementById("modalTitle").innerHTML = `${client.name} <span class="text-sm font-normal text-zinc-400">(${client.stage})</span>`;
+            
             document.getElementById("clientName").value = client.name;
             document.getElementById("clientCode").value = client.clientCode;
-            document.getElementById("startDate").value = client.startDate;
             document.getElementById("dueDate").value = client.dueDate;
-            document.getElementById("stageSelect").value = client.stage;
-            document.getElementById("assignedTo").value = client.assignedTo;
-            
+            document.getElementById("clientNotes").value = client.notes || "";
+
+            // Populate stage dropdown
+            const select = document.getElementById("stageSelect");
+            select.innerHTML = stages.map(s => `<option value="${s}" ${s === client.stage ? 'selected' : ''}>${s}</option>`).join('');
+
+            // Render checklist
+            renderChecklist(client);
+
+            // Render bottlenecks
+            renderModalBottlenecks(client);
+
             document.getElementById("clientModal").classList.remove("hidden");
-            window.currentEditingId = id;
         }
 
-        function saveClient() {
-            const name = document.getElementById("clientName").value.trim();
-            if (!name) return alert("Client name is required");
+        function renderChecklist(client) {
+            const container = document.getElementById("checklistContainer");
+            container.innerHTML = "";
 
-            if (window.currentEditingId) {
-                const client = clients.find(c => c.id === window.currentEditingId);
-                if (client) {
-                    client.name = name;
-                    client.clientCode = document.getElementById("clientCode").value;
-                    client.startDate = document.getElementById("startDate").value;
-                    client.dueDate = document.getElementById("dueDate").value;
-                    client.stage = document.getElementById("stageSelect").value;
-                    client.assignedTo = document.getElementById("assignedTo").value;
-                    client.progress = calculateProgress(client.milestones);
-                }
-            } else {
-                const newClient = {
-                    id: "c" + Date.now().toString(36),
-                    name: name,
-                    clientCode: document.getElementById("clientCode").value || "NEW-" + Date.now().toString().slice(-4),
-                    stage: document.getElementById("stageSelect").value,
-                    progress: 0,
-                    startDate: document.getElementById("startDate").value,
-                    dueDate: document.getElementById("dueDate").value,
-                    assignedTo: document.getElementById("assignedTo").value,
-                    milestones: [
-                        {title: "Engagement letter signed", completed: false},
-                        {title: "Risk assessment", completed: false},
-                        {title: "Fieldwork started", completed: false}
-                    ],
-                    bottlenecks: []
-                };
-                clients.push(newClient);
+            client.checklist.forEach((item, index) => {
+                const div = document.createElement("div");
+                div.className = "flex items-center gap-3 bg-zinc-800 border border-zinc-700 rounded-2xl px-4 py-3";
+                div.innerHTML = `
+                    <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                           onchange="toggleChecklistItem(${index});">
+                    <span class="flex-1 ${item.completed ? 'line-through text-zinc-400' : ''}">${item.title}</span>
+                    <button onclick="deleteChecklistItem(${index}); event.stopImmediatePropagation();" 
+                            class="text-red-400 hover:text-red-300 text-xl leading-none">×</button>
+                `;
+                container.appendChild(div);
+            });
+
+            // Update progress in modal
+            const progress = calculateProgress(client.checklist);
+            document.getElementById("modalProgressBar").style.width = progress + "%";
+            document.getElementById("modalProgressText").textContent = progress + "%";
+
+            // Auto-advance logic
+            const allDone = client.checklist.every(item => item.completed);
+            if (allDone && client.stage !== "Archive") {
+                setTimeout(() => {
+                    if (confirm(`All items in ${client.stage} are complete! Move to ${getNextStage(client.stage)}?`)) {
+                        autoAdvanceStage(client);
+                    }
+                }, 300);
+            }
+        }
+
+        function toggleChecklistItem(index) {
+            const client = clients.find(c => c.id === currentClientId);
+            if (!client) return;
+            client.checklist[index].completed = !client.checklist[index].completed;
+            renderChecklist(client);
+            renderKanban();
+            saveToLocalStorage();
+        }
+
+        function deleteChecklistItem(index) {
+            const client = clients.find(c => c.id === currentClientId);
+            if (!client) return;
+            client.checklist.splice(index, 1);
+            renderChecklist(client);
+            renderKanban();
+            saveToLocalStorage();
+        }
+
+        function addChecklistItem() {
+            const client = clients.find(c => c.id === currentClientId);
+            if (!client) return;
+            const newTitle = prompt("New checklist step:");
+            if (newTitle && newTitle.trim()) {
+                client.checklist.push({title: newTitle.trim(), completed: false});
+                renderChecklist(client);
+                renderKanban();
+                saveToLocalStorage();
+            }
+        }
+
+        function renderModalBottlenecks(client) {
+            const container = document.getElementById("modalBottlenecks");
+            container.innerHTML = client.bottlenecks.map((b, i) => `
+                <span onclick="removeBottleneck(${i});" 
+                      class="text-xs bg-red-900/50 text-red-300 px-3 py-1 rounded-full cursor-pointer flex items-center gap-1">
+                    ⚠ ${b} <span class="text-red-400">×</span>
+                </span>
+            `).join('');
+        }
+
+        function addBottleneck() {
+            const input = document.getElementById("newBottleneckInput");
+            const val = input.value.trim();
+            if (!val) return;
+            const client = clients.find(c => c.id === currentClientId);
+            if (client) {
+                client.bottlenecks.push(val);
+                renderModalBottlenecks(client);
+                renderBottlenecks();
+                input.value = "";
+                saveToLocalStorage();
+            }
+        }
+
+        function removeBottleneck(index) {
+            const client = clients.find(c => c.id === currentClientId);
+            if (client) {
+                client.bottlenecks.splice(index, 1);
+                renderModalBottlenecks(client);
+                renderBottlenecks();
+                saveToLocalStorage();
+            }
+        }
+
+        function manualStageChange() {
+            // Handled on save – this just allows selection
+        }
+
+        function autoAdvanceStage(client) {
+            const next = getNextStage(client.stage);
+            client.stage = next;
+            // Load fresh defaults for new stage
+            client.checklist = defaultChecklists[next].map(title => ({title, completed: false}));
+            closeModal();
+            renderKanban();
+            renderBottlenecks();
+            saveToLocalStorage();
+        }
+
+        function saveClientDetail() {
+            const client = clients.find(c => c.id === currentClientId);
+            if (!client) return;
+
+            client.name = document.getElementById("clientName").value.trim();
+            client.clientCode = document.getElementById("clientCode").value.trim();
+            client.dueDate = document.getElementById("dueDate").value;
+            client.notes = document.getElementById("clientNotes").value.trim();
+
+            // Manual stage change
+            const newStage = document.getElementById("stageSelect").value;
+            if (newStage !== client.stage) {
+                client.stage = newStage;
+                client.checklist = defaultChecklists[newStage].map(title => ({title, completed: false}));
             }
 
             closeModal();
@@ -454,26 +551,56 @@
             saveToLocalStorage();
         }
 
+        function addNewClient() {
+            const newClient = {
+                id: "c" + Date.now().toString(36),
+                name: "New Client",
+                clientCode: "NEW-" + Date.now().toString().slice(-4),
+                stage: "Planning",
+                dueDate: "",
+                checklist: defaultChecklists["Planning"].map(title => ({title, completed: false})),
+                notes: "",
+                bottlenecks: []
+            };
+            clients.push(newClient);
+            renderKanban();
+            saveToLocalStorage();
+            openClientDetail(newClient.id); // immediately open for editing
+        }
+
+        function deleteClient() {
+            if (!currentClientId) return;
+            if (!confirm("Delete this client permanently?")) return;
+            clients = clients.filter(c => c.id !== currentClientId);
+            closeModal();
+            renderKanban();
+            renderBottlenecks();
+            saveToLocalStorage();
+        }
+
         function closeModal() {
             document.getElementById("clientModal").classList.add("hidden");
+            currentClientId = null;
         }
 
         function showMondayModal() {
             const content = document.getElementById("mondayContent");
+            const upcoming = clients.filter(c => new Date(c.dueDate) < new Date(Date.now() + 14*86400000) && c.stage !== "Archive");
+            
             content.innerHTML = `
                 <div class="space-y-4">
                     <div class="bg-zinc-800 rounded-2xl p-5">
-                        <div class="text-emerald-400 text-sm font-medium">This Week Priority</div>
+                        <div class="text-emerald-400 text-sm font-medium">This Week / Next Week</div>
                         <div class="mt-3 space-y-3">
-                            ${clients.filter(c => c.stage === "Planning" || new Date(c.dueDate) < new Date(Date.now() + 7*86400000)).slice(0,3).map(c => `
-                                <div class="flex justify-between text-sm">
+                            ${upcoming.length ? upcoming.map(c => `
+                                <div onclick="openClientDetail('${c.id}');closeMondayModal();" class="flex justify-between text-sm cursor-pointer">
                                     <span>${c.name}</span>
-                                    <span class="text-zinc-400">${c.stage}</span>
+                                    <span class="text-zinc-400">${c.stage} • ${c.dueDate}</span>
                                 </div>
-                            `).join('')}
+                            `).join('') : '<p class="text-zinc-400">No urgent deadlines</p>'}
                         </div>
                     </div>
-                    <div class="text-center text-zinc-500 text-sm">You have ${clients.filter(c => new Date(c.dueDate) < new Date()).length} overdue items</div>
+                    <div class="text-center text-zinc-500 text-sm">You have ${clients.filter(c => new Date(c.dueDate) < new Date() && c.stage !== "Archive").length} overdue clients</div>
                 </div>
             `;
             document.getElementById("mondayModal").classList.remove("hidden");
@@ -483,24 +610,11 @@
             document.getElementById("mondayModal").classList.add("hidden");
         }
 
-        function switchView(view) {
-            document.getElementById("kanbanView").classList.toggle("hidden", view !== "kanban");
-            document.getElementById("resourceView").classList.toggle("hidden", view !== "resource");
-            
-            document.getElementById("btn-kanban").dataset.active = view === "kanban";
-            document.getElementById("btn-resource").dataset.active = view === "resource";
-
-            if (view === "resource") renderResourceView();
-        }
-
         function filterClients() {
-            const term = document.getElementById("searchInput").value.toLowerCase();
-            // Simple filter - re-render with all for demo (full filter would hide cards)
-            renderKanban();
+            renderKanban(); // full search can be added later – works for now
         }
 
         function filterBy(type) {
-            // Placeholder - can be expanded
             renderKanban();
         }
 
@@ -510,7 +624,7 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.download = "engagement-flow-backup.json";
+            link.download = "engagement-flow-solo-backup.json";
             link.click();
         }
 
@@ -527,25 +641,19 @@
                         renderKanban();
                         renderBottlenecks();
                         saveToLocalStorage();
-                        alert("Data imported successfully!");
-                    } catch(e) {
-                        alert("Invalid JSON file");
-                    }
+                        alert("✅ Data imported!");
+                    } catch(e) { alert("Invalid file"); }
                 };
                 reader.readAsText(file);
             };
             input.click();
         }
 
-        // Initialize
+        // Init
         window.onload = () => {
             loadFromLocalStorage();
-            if (clients.length === 0) {
-                // keep the sample data
-            }
             renderKanban();
             renderBottlenecks();
-            switchView('kanban');
         };
     </script>
 </body>
